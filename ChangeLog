@@ -1,0 +1,5 @@
+2018-08-08  Enrico Schumann  <es@enricoschumann.net>
+
+	* DESCRIPTION (Package): initial version
+
+	* R/write_daily_files.R (write_daily_files): add function
