@@ -9,6 +9,7 @@ Authors@R: person("Enrico", "Schumann",
 		  comment = c(ORCID = "0000-0001-7601-6576"))
 Maintainer: Enrico Schumann <es@enricoschumann.net>
 Description: Utilities for working with ASCII data files of the
-    CRSP. Note that the package does not include any data, which
-    requires a subscription to the CRSP data service.
+    CRSP. Note that the package does not include any data:
+    accessing the data requires a subscription to the
+    CRSP data service.
 License: GPL-3
