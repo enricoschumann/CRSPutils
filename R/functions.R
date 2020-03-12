@@ -35,3 +35,28 @@ write_daily_files <- function(filename, outdir, verbose = TRUE) {
     }
     invisible(i)
 }
+
+shares_history <- function(filename) {
+    ans <- read.table(filename, sep = "|", as.is = TRUE)
+    colnames(ans) <- c("KYPERMNO", "SHRSDT", "SHRSENDDT", "SHROUT", "SHRFLG")
+    date.fields <- c("SHRSDT", "SHRSENDDT")
+    for (d in date.fields)
+        ans[, d] <- as.Date(as.character(ans[, d]),
+                            format = "%Y%m%d")
+    ans
+}
+
+distributions <- function(filename) {
+    ans <- read.table(filename, sep = "|", as.is = TRUE)
+
+    colnames(ans) <- c("KYPERMNO", "DISTCD", "DIVAMT",
+                       "FACPR", "FACSHR", "DCLRDT", "EXDT",
+                       "RCRDDT", "PAYDT", "ACPERM", "ACCOMP")
+
+    date.fields <- c("DCLRDT", "EXDT", "RCRDDT", "PAYDT")
+    for (d in date.fields)
+        ans[, d] <- as.Date(as.character(ans[, d]),
+                            format = "%Y%m%d")
+    ans
+}
+
