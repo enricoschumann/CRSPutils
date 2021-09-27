@@ -36,8 +36,8 @@ write_daily_files <- function(filename, outdir, verbose = TRUE) {
     invisible(i)
 }
 
-shares_history <- function(filename) {
-    ans <- read.table(filename, sep = "|", as.is = TRUE)
+shares_history <- function(file, ...) {
+    ans <- read.table(file, sep = "|", as.is = TRUE)
     colnames(ans) <- c("KYPERMNO", "SHRSDT", "SHRSENDDT", "SHROUT", "SHRFLG")
     date.fields <- c("SHRSDT", "SHRSENDDT")
     for (d in date.fields)
@@ -46,8 +46,8 @@ shares_history <- function(filename) {
     ans
 }
 
-distributions <- function(filename) {
-    ans <- read.table(filename, sep = "|", as.is = TRUE)
+distributions <- function(file, ...) {
+    ans <- read.table(file, sep = "|", as.is = TRUE)
 
     colnames(ans) <- c("KYPERMNO", "DISTCD", "DIVAMT",
                        "FACPR", "FACSHR", "DCLRDT", "EXDT",
@@ -60,3 +60,48 @@ distributions <- function(filename) {
     ans
 }
 
+nam_fun <- function(file, empty.NA = TRUE, ...) {
+
+    old.scipen <- options(scipen = 99)
+    on.exit(options(scipen = old.scipen))
+    NAME_HISTORY <- read.table(file,
+                               sep = "|",
+                               stringsAsFactors = FALSE)
+
+    colnames(NAME_HISTORY) <- c("KYPERMNO", "NAMEDT", "NAMEENDDT",
+                                "NCUSIP", "NCUSIP9", "TICKER",
+                                "COMNAM", "SHRCLS", "SHRCD",
+                                "EXCHCD", "SICCD", "TSYMBOL",
+                                "SNAICS", "PRIMEXCH", "TRDSTAT",
+                                "SECSTAT")
+
+    NAME_HISTORY[["NAMEDT"]] <- as.Date(
+        as.character(NAME_HISTORY[["NAMEDT"]]), format = "%Y%m%d")
+    NAME_HISTORY[["NAMEENDDT"]] <- as.Date(
+        as.character(NAME_HISTORY[["NAMEENDDT"]]), format = "%Y%m%d")
+
+    if (empty.NA)
+        for (i in which(unlist(lapply(NAME_HISTORY, mode)) == "character"))
+            NAME_HISTORY[[i]][ NAME_HISTORY[[i]] == "" ] <- NA
+
+    function(search,
+             include.ticker = FALSE,
+             ticker.only = FALSE,
+             ignore.case = TRUE,
+             ...) {
+        if (missing(search))
+            NAME_HISTORY
+        else {
+            if (ticker.only)
+                ii <- grepl(search, NAME_HISTORY$TICKER, ignore.case = ignore.case)
+            else
+                ii <- grepl(search, NAME_HISTORY$COMNAM, ignore.case = ignore.case)
+
+            if (include.ticker && !ticker.only)
+                ii <- ii | grepl(search, NAME_HISTORY$TICKER, ignore.case = ignore.case)
+            if (!sum(ii))
+                return(invisible(NULL))
+            NAME_HISTORY[ii, , drop = FALSE]
+        }
+    }
+}

@@ -1,3 +1,7 @@
+2021-05-21  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (nam_fun): add function
+
 2018-11-14  Enrico Schumann  <es@enricoschumann.net>
 
 	* R/functions.R (write_daily_files): overwrite
